@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Excel 파일 업로드</title>
+    <style>
+        /* 간단한 스타일 추가 (선택 사항) */
+        body { font-family: sans-serif; padding: 20px; }
+        .message { padding: 10px; margin-bottom: 15px; border-radius: 5px; }
+        .success { background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+
+    <h1>Excel 파일 업로드 (.xlsx)</h1>
+
+    <div th:if="${message}"
+         th:text="${message}"
+         th:classappend="${#strings.containsIgnoreCase(message, '성공')} ? 'message success' : 'message error'">
+    </div>
+
+    <form method="POST" th:action="@{/upload}" enctype="multipart/form-data">
+        <div>
+            <label for="fileInput">파일 선택:</label>
+            <input type="file" id="fileInput" name="file" accept=".xlsx" required>
+        </div>
+        <div>
+            <button type="submit">업로드</button>
+        </div>
+    </form>
+
+    <hr>
+
+    <div th:if="${allRowsData != null and not #lists.isEmpty(allRowsData)}">
+        <h2>추출된 데이터:</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th th:each="header : ${allRowsData[0]}" th:text="${header}"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="rowData, rowStat : ${allRowsData}">
+                    <th:block th:if="${rowStat.index > 0}">
+                        <td th:each="cellData, cellStat : ${rowData}" th:text="${cellData}"></td>
+                    </th:block>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
